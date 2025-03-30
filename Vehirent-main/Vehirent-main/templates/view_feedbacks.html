@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Feedbacks - VehicleRent Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex">
+                        <div class="flex-shrink-0 flex items-center">
+                            <h1 class="text-2xl font-bold text-gray-900">VehicleRent Admin</h1>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="{% url 'admin_dashboard' %}" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+                        <a href="{% url 'admin_logout' %}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Customer Feedbacks</h2>
+
+            <div class="space-y-6">
+                {% for feedback in feedbacks %}
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                {{ feedback.rental.customer.user.get_full_name }}
+                            </h3>
+                            <p class="text-sm text-gray-600">
+                                Vehicle: {{ feedback.rental.vehicle.name }}
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                {{ feedback.created_at|date:"F j, Y, g:i a" }}
+                            </p>
+                        </div>
+                        {% if not feedback.is_admin_reply %}
+                        <a href="{% url 'reply_feedback' feedback.id %}" 
+                           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Reply
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="text-gray-700">{{ feedback.message }}</p>
+                    </div>
+
+                    {% if feedback.is_admin_reply %}
+                    <div class="border-t pt-4">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-2">Admin Reply</h4>
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-gray-700">{{ feedback.admin_reply }}</p>
+                            <p class="text-sm text-gray-500 mt-2">
+                                Replied on: {{ feedback.replied_at|date:"F j, Y, g:i a" }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                    <p class="text-gray-500">No feedbacks available.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

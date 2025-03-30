@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ vehicle.brand }} {{ vehicle.name }}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Flatpickr for Date Picking -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Heroicons -->
+    <script src="https://unpkg.com/heroicons@2.1.1/dist/heroicons.min.js"></script>
+
+    <style>
+        /* Custom styles for Flatpickr */
+        .flatpickr-day.disabled {
+            background: #f0f0f0 !important;
+            color: #999 !important;
+            cursor: not-allowed !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="/vehicles/" class="flex items-center text-gray-900 hover:text-blue-600 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Vehicles
+                </a>
+                <a href="/" class="text-gray-900 hover:text-blue-600 transition">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Vehicle Details Container -->
+    <div class="max-w-6xl mx-auto px-4 py-8 grid md:grid-cols-2 gap-8">
+        <!-- Vehicle Image -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            {% if vehicle.image %}
+                <img 
+                    src="{{ vehicle.image.url }}" 
+                    alt="{{ vehicle.name }}" 
+                    class="w-full h-[500px] object-cover transition-transform duration-300 hover:scale-105"
+                >
+            {% else %}
+                <div class="w-full h-[500px] bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
+                    <span class="text-gray-700 text-2xl">No Image Available</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Vehicle Information -->
+        <div class="bg-white rounded-xl shadow-lg p-8 space-y-6">
+            <div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-2">
+                    {{ vehicle.brand }} {{ vehicle.name }}
+                </h1>
+                <p class="text-gray-600 text-lg">{{ vehicle.description }}</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Model Year</h3>
+                    <p class="text-xl font-bold text-gray-800">{{ vehicle.model_year }}</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Daily Rate</h3>
+                    <p class="text-xl font-bold text-green-600">
+                        Rs.{{ vehicle.price_per_day }}/day
+                    </p>
+                </div>
+            </div>
+
+            <!-- Booking Section -->
+            {% if vehicle.available %}
+                {% if user.is_authenticated and user.customer %}
+                    <form 
+                        method="POST" 
+                        action="{% url 'book_vehicle' vehicle.id %}" 
+                        class="space-y-4 bg-gray-50 p-6 rounded-lg"
+                    >
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Start Date
+                            </label>
+                            <input 
+                                type="text" 
+                                id="start_date" 
+                                name="start_date" 
+                                required 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition"
+                                placeholder="Select start date"
+                            >
+                        </div>
+            
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                End Date
+                            </label>
+                            <input 
+                                type="text" 
+                                id="end_date" 
+                                name="end_date" 
+                                required 
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 transition"
+                                placeholder="Select end date"
+                            >
+                        </div>
+            
+                        <button 
+                            type="submit" 
+                            class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition flex items-center justify-center space-x-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Book Now</span>
+                        </button>
+                    </form>
+                {% else %}
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                        <p class="text-yellow-700">
+                            You must <a href="/login/" class="underline text-yellow-800 hover:text-yellow-900">log in</a> to book this vehicle.
+                        </p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="bg-red-50 border-l-4 border-red-400 p-4">
+                    <p class="text-red-700">
+                        This vehicle is currently unavailable.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Booked days list
+            const bookedDays = {{ booked_days|safe }};
+
+            // Configure Flatpickr for start date
+            const startDatePicker = flatpickr("#start_date", {
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                disable: bookedDays,
+                onClose: function(selectedDates, dateStr, instance) {
+                    // Update end date picker's min date
+                    endDatePicker.set('minDate', dateStr ? new Date(dateStr).fp_incr(1) : 'today');
+                    
+                    // Reset end date if it's not valid
+                    if (!endDatePicker.selectedDates[0] || 
+                        endDatePicker.selectedDates[0] <= new Date(selectedDates[0])) {
+                        endDatePicker.clear();
+                    }
+                }
+            });
+
+            // Configure Flatpickr for end date
+            const endDatePicker = flatpickr("#end_date", {
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                disable: bookedDays
+            });
+        });
+    </script>
+</body>
+</html>

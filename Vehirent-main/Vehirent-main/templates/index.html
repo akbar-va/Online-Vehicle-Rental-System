@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VehicleRent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="px-4 lg:px-6 h-16 flex items-center border-b">
+        <a href="/" class="flex items-center gap-2 font-bold text-xl">
+            🚗
+            <span>VehicleRent</span>
+        </a>
+        <nav class="ml-auto flex gap-4">
+            <a href="{% url "customer_login" %}" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Buyer Login</a>
+            <a href="{% url "admin_login" %}" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Admin Login</a>
+            <a href="{% url "customer_register" %}" class="px-4 py-2 border rounded">Register</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+        <section class="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
+            <div class="container mx-auto px-4 md:px-6">
+                <div class="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
+                    <div class="space-y-4">
+                        <h1 class="text-3xl font-bold tracking-tighter sm:text-5xl">ONLINE VEHICLE RENTAL SYSTEM</h1>
+                        <p class="text-gray-600 md:text-xl">Find the perfect vehicle for your needs from our wide selection of cars, bikes, and more. Book instantly with a small advance payment.</p>
+                        <div class="flex flex-col gap-2 sm:flex-row">
+                            <a href="/vehicles" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700">Browse Vehicles</a>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <div class="relative w-full h-80 overflow-hidden rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                            <img src="https://www.motoroids.com/wp-content/uploads/2020/05/Ford-Mustang-John-Wick-1200x675.jpg" alt="Vehicle" class="absolute w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="w-full py-12 md:py-24 lg:py-32">
+            <div class="container mx-auto px-4 md:px-6 text-center">
+                <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl">How It Works</h2>
+                <p class="max-w-2xl mx-auto text-gray-600 md:text-xl">Renting a vehicle has never been easier. Follow these simple steps to get started.</p>
+
+                <div class="grid max-w-5xl mx-auto gap-6 py-12 lg:grid-cols-3">
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-white text-lg font-bold">1</div>
+                        <h3 class="text-xl font-bold">Browse Vehicles</h3>
+                        <p class="text-gray-600">Explore our wide selection of vehicles from different sellers.</p>
+                    </div>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-white text-lg font-bold">2</div>
+                        <h3 class="text-xl font-bold">Book with Advance</h3>
+                        <p class="text-gray-600">Secure your booking with a small advance payment.</p>
+                    </div>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-white text-lg font-bold">3</div>
+                        <h3 class="text-xl font-bold">Enjoy Your Ride</h3>
+                        <p class="text-gray-600">Pick up your vehicle and enjoy your journey.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t py-6">
+        <div class="container mx-auto flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row">
+            <p class="text-sm text-gray-500">© 2025 VehicleRent. All rights reserved.</p>
+            <nav class="flex gap-4">
+                <a href="/terms" class="text-sm text-gray-500 hover:underline">Terms</a>
+                <a href="/privacy" class="text-sm text-gray-500 hover:underline">Privacy</a>
+            </nav>
+        </div>
+    </footer>
+
+</body>
+</html>

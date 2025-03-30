@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - VehicleRent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-white shadow-xl p-6">
+            <div class="mb-10">
+                <a href="{% url 'index' %}">
+                <h2 class="text-2xl font-bold text-blue-600">VehicleRent</h2>
+                </a>
+            </div>
+            <nav>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center text-gray-700 hover:bg-blue-50 p-2 rounded-lg transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center text-gray-700 hover:bg-blue-50 p-2 rounded-lg transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            My Rentals
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center text-gray-700 hover:bg-blue-50 p-2 rounded-lg transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                            Payments
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center text-gray-700 hover:bg-blue-50 p-2 rounded-lg transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            Profile
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="flex-1 bg-gray-50 p-10">
+            <!-- Welcome Header -->
+            <header class="mb-10">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-4xl font-bold text-gray-800">Hello, {{ request.user.first_name }}! 👋</h1>
+                        <p class="text-gray-500 mt-2">Welcome to your VehicleRent dashboard</p>
+                    </div>
+                    <div>
+                        <a href="" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                            Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- My Rentals Section -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">My Rentals</h2>
+                    {% if rentals %}
+                        <div class="space-y-4">
+                            {% for rental in rentals %}
+                                <div class="bg-gray-50 p-4 rounded-lg border">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h3 class="font-medium">{{ rental.vehicle.name }}</h3>
+                                            <p class="text-sm text-gray-500">
+                                                {{ rental.start_date }} to {{ rental.end_date }}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            {% if rental.is_fully_paid %}
+                                                <span class="text-green-600">✅ Paid</span>
+                                            {% else %}
+                                                <a href="{% url 'complete_payment' rental.id %}" 
+                                                   class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm">
+                                                    Pay ₹{{ rental.pending_payment|floatformat:2 }}
+                                                </a>
+                                            {% endif %}
+                                            <a href="{% url 'add_feedback' rental.id %}" 
+                                               class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-700">
+                                                Feedback
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500">No active rentals.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Available Vehicles Section -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Available Vehicles</h2>
+                    {% for vehicle in vehicles %}
+                        <div class="bg-gray-50 p-4 rounded-lg border mb-4 last:mb-0">
+                            <h3 class="font-medium">{{ vehicle.name }}</h3>
+                            <div class="flex justify-between items-center mt-2">
+                                <div>
+                                    <p class="text-sm text-gray-500">{{ vehicle.category }}</p>
+                                    <p class="text-blue-600 font-semibold">₹{{ vehicle.price_per_day }}/day</p>
+                                </div>
+                                <a href="{% url 'view_vehicle' vehicle.id %}" 
+                                   class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-700 transition">
+                                    Book Now
+                                </a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-gray-500">No vehicles available.</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Payment History Section -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Payment History</h2>
+                    {% if payments %}
+                        <div class="space-y-4">
+                            {% for payment in payments %}
+                                <div class="bg-gray-50 p-4 rounded-lg border flex justify-between items-center">
+                                    <div>
+                                        <p class="font-medium">Payment</p>
+                                        <p class="text-sm text-gray-500">{{ payment.payment_date }}</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-green-600 font-semibold">₹{{ payment.amount_paid }}</span>
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'download_receipt' payment.id %}" 
+                                           class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-700 transition">
+                                            Download
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500">No payment history.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Feedbacks Section -->
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">My Feedbacks</h2>
+                    {% if rentals %}
+                        <div class="space-y-4">
+                            {% for rental in rentals %}
+                                {% for feedback in rental.feedbacks.all %}
+                                    <div class="bg-gray-50 p-4 rounded-lg border">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div>
+                                                <h3 class="font-medium">{{ rental.vehicle.name }}</h3>
+                                                <p class="text-sm text-gray-500">
+                                                    {{ feedback.created_at|date:"F j, Y, g:i a" }}
+                                                </p>
+                                            </div>
+                                            {% if not feedback.is_admin_reply %}
+                                                <span class="text-yellow-600 text-sm">Pending Reply</span>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="bg-white p-3 rounded-lg mb-3">
+                                            <p class="text-gray-700">{{ feedback.message }}</p>
+                                        </div>
+
+                                        {% if feedback.is_admin_reply %}
+                                            <div class="border-t pt-3">
+                                                <div class="flex items-center mb-2">
+                                                    <span class="text-blue-600 font-medium text-sm">Admin Reply</span>
+                                                    <span class="text-gray-500 text-sm ml-2">
+                                                        {{ feedback.replied_at|date:"F j, Y, g:i a" }}
+                                                    </span>
+                                                </div>
+                                                <div class="bg-blue-50 p-3 rounded-lg">
+                                                    <p class="text-gray-700">{{ feedback.admin_reply }}</p>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% empty %}
+                                    {% if forloop.last %}
+                                        <p class="text-gray-500">No feedbacks submitted yet.</p>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500">No rentals to submit feedback for.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Profile Details -->
+            <div class="mt-10 bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Profile Details</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-gray-600">Full Name</p>
+                        <p class="font-medium">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Email</p>
+                        <p class="font-medium">{{ request.user.email }}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Member Since</p>
+                        <p class="font-medium">{{ request.user.date_joined }}</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

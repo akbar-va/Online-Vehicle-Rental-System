@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Rental Admin Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js for Data Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="text-blue-600">
+                        <i data-lucide="car" class="w-10 h-10"></i>
+                    </div>
+                    <h1 class="text-3xl font-extrabold text-gray-900">
+                        Vehicle Rental Admin
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="{% url 'view_feedbacks' %}" class="text-gray-700 hover:text-blue-600 transition duration-300 flex items-center space-x-2">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        <span>Feedbacks</span>
+                    </a>
+                    <a href="{% url 'admin_logout' %}" class="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition duration-300 flex items-center space-x-2">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Quick Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition duration-300 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-gray-500 text-sm uppercase tracking-wide">Total Customers</h3>
+                        <p class="text-3xl font-bold text-gray-900">{{ customers.count }}</p>
+                    </div>
+                    <div class="text-blue-500">
+                        <i data-lucide="users" class="w-10 h-10"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition duration-300 border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-gray-500 text-sm uppercase tracking-wide">Total Vehicles</h3>
+                        <p class="text-3xl font-bold text-gray-900">{{ vehicles.count }}</p>
+                    </div>
+                    <div class="text-green-500">
+                        <i data-lucide="car" class="w-10 h-10"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition duration-300 border-l-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-gray-500 text-sm uppercase tracking-wide">Total Rentals</h3>
+                        <p class="text-3xl font-bold text-gray-900">{{ rentals.count }}</p>
+                    </div>
+                    <div class="text-purple-500">
+                        <i data-lucide="file-text" class="w-10 h-10"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition duration-300 border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-gray-500 text-sm uppercase tracking-wide">Total Payments</h3>
+                        <p class="text-3xl font-bold text-gray-900">Rs. {{ total_payment }}</p>
+                    </div>
+                    <div class="text-green-500">
+                        <i data-lucide="dollar-sign" class="w-10 h-10"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Insights -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Rental Analytics Chart -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Monthly Rental Performance</h3>
+                <canvas id="rentalChart"></canvas>
+            </div>
+
+            <!-- Vehicle Availability Pie Chart -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Vehicle Availability</h3>
+                <canvas id="vehicleAvailabilityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Rentals Table -->
+        <div class="bg-white rounded-xl shadow-md mt-8">
+            <div class="px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-xl font-semibold text-gray-900">Recent Rentals</h3>
+                <a href="{% url 'add_vehicle' %}" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition duration-300 flex items-center space-x-2">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                    <span>Add Vehicle</span>
+                </a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600">
+                            <th class="px-6 py-3 text-left">Customer</th>
+                            <th class="px-6 py-3 text-left">Vehicle</th>
+                            <th class="px-6 py-3 text-left">Start Date</th>
+                            <th class="px-6 py-3 text-left">End Date</th>
+                            <th class="px-6 py-3 text-left">Total Price</th>
+                            <th class="px-6 py-3 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rental in rentals %}
+                        <tr class="border-b hover:bg-gray-50 transition duration-200">
+                            <td class="px-6 py-4">{{ rental.customer.user.username }}</td>
+                            <td class="px-6 py-4">{{ rental.vehicle.name }}</td>
+                            <td class="px-6 py-4">{{ rental.start_date }}</td>
+                            <td class="px-6 py-4">{{ rental.end_date }}</td>
+                            <td class="px-6 py-4">Rs. {{ rental.total_price }}</td>
+                            <td class="px-6 py-4">
+                                {% if rental.is_fully_paid %}
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs">Paid</span>
+                                {% else %}
+                                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Rental Performance Chart
+        const ctx1 = document.getElementById('rentalChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Monthly Rentals',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Vehicle Availability Pie Chart
+        const ctx2 = document.getElementById('vehicleAvailabilityChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ['Available', 'Rented'],
+                datasets: [{
+                    data: [{{ available_vehicles.count }}, {{ rented_vehicles_count }}],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(255, 99, 132, 0.6)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+</body>
+</html>
